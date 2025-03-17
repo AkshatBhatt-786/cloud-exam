@@ -5,6 +5,8 @@ import re
 import sys
 from tkinter import messagebox
 from ui_components import *
+import time
+import threading
 import tkinter as tk
 from utils import getPath, centerWindow
 
@@ -23,6 +25,9 @@ class CloudAuthView(ctk.CTkToplevel):
         self.configure(fg_color=Colors.PRIMARY)
         self.resizable(False, False)
         self.student_data = None
+        self.internet_connectivity = self.firebase_auth.is_connected()
+        self.internet_monitoring_thread = threading.Thread(target=self.monitor_internet, daemon=True)
+        self.internet_monitoring_thread.start()
         
         self.name_valid = False
         self.enrollment_valid = False
@@ -176,20 +181,41 @@ class CloudAuthView(ctk.CTkToplevel):
             
     def check_enrollment_availability(self, event):
         enrollment = self.reg_enrollment.get()
+
         if len(enrollment) != 12:
             self.enrollment_format_status.configure(text="⨯ Must be 12 digits", text_color="red")
-            self.enrollment_availability_status.configure(text="◍ Enrollment Available",text_color="gray")
+            self.enrollment_availability_status.configure(text="◍ Enrollment Available", text_color="gray")
             self.enrollment_valid = False
             return
+
         self.enrollment_format_status.configure(text="✓ Valid format", text_color="green")
-        
-        if self.firebase_auth.db is not None:
-            if self.firebase_auth.db.collection("students").document(enrollment).get().exists:
-                self.enrollment_availability_status.configure(text="⨯ Enrollment Exists", text_color="red")
-                self.enrollment_valid = False
-            else:
-                self.enrollment_availability_status.configure(text="✓ Enrollment Available", text_color="green")
-                self.enrollment_valid = True
+        self.enrollment_availability_status.configure(text="Checking...", text_color="blue")
+
+        if not self.internet_connectivity or not self.firebase_auth.database_connected:
+            self.enrollment_availability_status.configure(text="⨯ No internet connection", text_color="red")
+            self.enrollment_valid = False
+            return
+
+        def fetch_enrollment_status():
+            try:
+                exists = self.firebase_auth.db.collection("students").document(enrollment).get().exists
+            except Exception as e:
+                exists = None 
+
+            def update_ui():
+                if exists is None:
+                    self.enrollment_availability_status.configure(text="⨯ Network Error", text_color="red")
+                    self.enrollment_valid = False
+                elif exists:
+                    self.enrollment_availability_status.configure(text="⨯ Enrollment Exists", text_color="red")
+                    self.enrollment_valid = False
+                else:
+                    self.enrollment_availability_status.configure(text="✓ Enrollment Available", text_color="green")
+                    self.enrollment_valid = True
+
+            self.after(0, update_ui)
+
+        threading.Thread(target=fetch_enrollment_status, daemon=True).start()
         
 
     def check_college_validity(self, event):
@@ -226,30 +252,62 @@ class CloudAuthView(ctk.CTkToplevel):
     def attempt_login(self):
         enrollment = self.login_enrollment.get()
         password = self.login_password.get()
-        
-        student_data = self.firebase_auth.student_login(enrollment, password)
-        if student_data:
-            self.student_data = student_data
-            self.on_login_success()
-        else:
-            messagebox.showerror("Login Failed", "Invalid enrollment or password")
+
+        self.login_status.configure(text="Authenticating...", text_color="blue")
+
+        def login_task():
+            try:
+                student_data = self.firebase_auth.student_login(enrollment, password)
+            except ConnectionError as e:
+                student_data = None
+                error_message = str(e)
+
+            def update_ui():
+                if student_data:
+                    self.student_data = student_data
+                    self.on_login_success()
+                else:
+                    error_text = "Invalid enrollment or password"
+                    self.login_status.configure(text=f"⨯ {error_text}", text_color="red")
+
+            self.after(0, update_ui)
+
+        threading.Thread(target=login_task, daemon=True).start()
+
 
     def run(self):
         self.build_ui()
         self.mainloop()
 
     def attempt_registration(self):
-        if all([self.enrollment_valid, self.college_valid, self.password_strong, self.passwords_match]):
-            success = self.firebase_auth.register_student(
-                enrollment=self.reg_enrollment.get(),
-                name=self.reg_name.get(), 
-                password=self.reg_password.get(),
-                college_id=self.reg_college.get()
-            )
-            if success:
-                messagebox.showinfo("Success", "Registration successful!")
-                self.tab_view.set("Login")
-            else:
-                messagebox.showerror("Error", "Registration failed")
-        else:
+        if not all([self.enrollment_valid, self.college_valid, self.password_strong, self.passwords_match]):
             messagebox.showwarning("Validation Error", "Please fix all validation issues before submitting")
+            return
+
+        def register_task():
+            try:
+                success = self.firebase_auth.register_student(
+                    enrollment=self.reg_enrollment.get(),
+                    name=self.reg_name.get(),
+                    password=self.reg_password.get(),
+                    college_id=self.reg_college.get()
+                )
+            except ConnectionError as e:
+                success = False
+                error_message = str(e)
+
+            def update_ui():
+                if success:
+                    messagebox.showinfo("Success", "Registration successful!")
+                    self.tab_view.set("Login")
+                else:
+                    messagebox.showerror("Error", error_message if not success else "Registration failed")
+
+            self.after(0, update_ui)
+
+        threading.Thread(target=register_task, daemon=True).start()
+
+    def monitor_internet(self):
+        while True:
+            self.internet_connectivity = self.firebase_auth.is_connected()
+            time.sleep(1)
