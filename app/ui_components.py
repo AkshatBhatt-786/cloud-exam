@@ -1,64 +1,53 @@
 import customtkinter as ctk
 
-
 class Colors:
-
-    PRIMARY = "#121826"  
-    SECONDARY = "#1F2937"  
-    ACCENT = "#6366F1" 
+    PRIMARY = "#FFFFFF"  
+    SECONDARY = "#F5F5F5"  
+    ACCENT = "#3498db" 
     HIGHLIGHT = "#22D3EE"  
     SUCCESS = "#4ADE80" 
     WARNING = "#FACC15"  
-    DANGER = "#F87171"
-    BACKGROUND = "#0F172A" 
+    DANGER = "#D94E63"
+    BACKGROUND = "#FFFFFF" 
     
     class Texts:
-        HEADERS = "#E2E8F0"  
-        FIELDS = "#CBD5E1"  
-        PLACEHOLDER = "#94A3B8"  
-        BORDER = "#475569"  
+        HEADERS = "#2c3e50"  
+        FIELDS = "#34495e"  
+        PLACEHOLDER = "#95a5a6"  
+        BORDER = "#bdc3c7"  
 
     class Sidebar:
-        BACKGROUND = "#1E293B"
-        BORDER = "#334155"
-        HOVER = "#4B5563" 
+        BACKGROUND = "#F2F9FA"
+        BORDER = "#FFD3BA"
+        HOVER = "#A8DADC" 
+        TEXT = "#4A4A4A"
+        SECTION_BG = "#B0E5E8"
+        BUTTON_BG = "#C4E4E7"
 
     class Buttons:
-        PRIMARY = "#6366F1"  
-        PRIMARY_HOVER = "#818CF8"  
-        SECONDARY = "#10B981"  
-        SECONDARY_HOVER = "#34D399"
-        DISABLED = "#64748B"
+        PRIMARY = "#3498db"  
+        PRIMARY_HOVER = "#2980b9"  
+        SECONDARY = "#C4E4E7"  
+        SECONDARY_HOVER = "#A8DADC"
+        DISABLED = "#94A3B8"
+        TEXT = "#FFFFFF"
     
     class Inputs:
-        BACKGROUND = "#1F2937"
-        BORDER = "#334155"
-        TEXT = "#E2E8F0"
-        PLACEHOLDER = "#94A3B8"
+        BACKGROUND = "#F5F5F5"
+        BORDER = "#bdc3c7"
+        TEXT = "#34495e"
+        PLACEHOLDER = "#95a5a6"
     
     class Cards:
-        BACKGROUND = "#1E293B"
-        BORDER = "#334155"
+        BACKGROUND = "#ecf0f1"
+        BORDER = "#3498db"
     
-    class Footer:
-        BACKGROUND = "#0F172A"
-        TEXT = "#94A3B8"
-    
-    class Modals:
-        BACKGROUND = "#1E293B"
-        BORDER = "#334155"
-    
-    class Radio:
-        BACKGROUND = "#2B2B2B"       
-        PRIMARY = "#4A90E2"            
-        SECONDARY = "#6C757D"         
-        HOVER = "#357ABD"            
-        ACTIVE = "#2D6DB4"           
-        BORDER = "#3D3D3D"            
-        TEXT = "#F8F9FA"         
-        DISABLED = "#495057"           
-        CHECKMARK = "#FFFFFF"        
-        GLOW = "rgba(74, 144, 226, 0.2)"
+    class Special:
+        ERROR_TEXT = "#D94E63"
+        HEADER_ACCENT = "#1565C0"
+        HIGHLIGHT_TEXT = "#e67e22"
+        BULLET_POINTS = "#8e44ad"
+        FOOTER_TEXT = "#7f8c8d"   
 
 
 class PrimaryButton(ctk.CTkButton):

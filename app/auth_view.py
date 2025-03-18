@@ -265,6 +265,7 @@ class CloudAuthView(ctk.CTkToplevel):
             def update_ui():
                 if student_data:
                     self.student_data = student_data
+                    self.student_data["enrollment_no"] = enrollment
                     self.on_login_success()
                 else:
                     error_text = "Invalid enrollment or password"
