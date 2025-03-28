@@ -200,7 +200,7 @@ class CloudExamApp(ctk.CTk):
             subject_details = kwargs.get("subject_details")
             questions = kwargs.get("questions")
             self.attributes("-topmost", True)
-            self.overrideredirect(True)
+            # self.overrideredirect(True)
             self.exam_portal_page = ExamUI(self, subject_details=subject_details, student_data=self.sample_data, questions=questions, parent=self)
             self.exam_portal_page.pack(padx=10, pady=10, anchor="center")
 

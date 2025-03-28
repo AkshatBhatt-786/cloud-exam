@@ -135,10 +135,10 @@ class ExamPortalPage(ctk.CTkFrame):
 
         dbx_backend = DropboxBackend(access_token, app_key, app_secret, getPath("database\\temp"))
 
-        file_exists = dbx_backend.download_file(dropbox_path=f"/uploads/{self.exam_id_entry.get().upper()}.enc", local_path=getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}.enc"))
-        if not file_exists:
-            self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
-            return
+        # file_exists = dbx_backend.download_file(dropbox_path=f"/uploads/{self.exam_id_entry.get().upper()}.enc", local_path=getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}.enc"))
+        # if not file_exists:
+        #     self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
+        #     return
 
         filepath = getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}") + ".enc"
         access_code = self.access_code_entry.get()
@@ -160,7 +160,6 @@ class ExamPortalPage(ctk.CTkFrame):
                 return
 
             data = json.loads(decrypted_data)
-            print(data)
 
             exam_date = data["auth_data"]["registration_date"]
             registration_time = data["auth_data"]["registration_time"] + ":00"
@@ -173,6 +172,7 @@ class ExamPortalPage(ctk.CTkFrame):
             sub_details = data["subject_details"]
             sub_details["exam_start_time"] = close_datetime
             sub_details["answer_key"] = data["answer-key"]
+            sub_details["question_mapping"] = data["question-mapping"]
             questions_data = data["questions"]
 
             if current_time < exam_datetime:

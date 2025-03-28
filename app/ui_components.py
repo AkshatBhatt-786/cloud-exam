@@ -1,5 +1,76 @@
 import customtkinter as ctk
 
+
+class Colors:
+
+    PRIMARY = "#121826"  
+    SECONDARY = "#1F2937"  
+    ACCENT = "#6366F1" 
+    HIGHLIGHT = "#22D3EE"  
+    SUCCESS = "#4ADE80" 
+    WARNING = "#FACC15"  
+    DANGER = "#F87171"
+    BACKGROUND = "#0F172A" 
+    
+    class Texts:
+        HEADERS = "#E2E8F0"  
+        FIELDS = "#CBD5E1"  
+        PLACEHOLDER = "#94A3B8"  
+        BORDER = "#475569"  
+
+    class Sidebar:
+        BACKGROUND = "#1E293B"
+        TEXT= "#E2E8F0"  
+        BORDER = "#334155"
+        HOVER = "#4B5563" 
+        SECTION_BG = "#1F2937"
+        BUTTON_BG = "#6366F1"
+
+    class Buttons:
+        PRIMARY = "#6366F1"  
+        PRIMARY_HOVER = "#818CF8"  
+        SECONDARY = "#10B981"  
+        SECONDARY_HOVER = "#34D399"
+        DISABLED = "#64748B"
+    
+    class Inputs:
+        BACKGROUND = "#1F2937"
+        BORDER = "#334155"
+        TEXT = "#E2E8F0"
+        PLACEHOLDER = "#94A3B8"
+    
+    class Cards:
+        BACKGROUND = "#1E293B"
+        BORDER = "#334155"
+    
+    class Footer:
+        BACKGROUND = "#0F172A"
+        TEXT = "#94A3B8"
+    
+    class Modals:
+        BACKGROUND = "#1E293B"
+        BORDER = "#334155"
+    
+    class Radio:
+        BACKGROUND = "#2B2B2B"       
+        PRIMARY = "#4A90E2"            
+        SECONDARY = "#6C757D"         
+        HOVER = "#357ABD"            
+        ACTIVE = "#2D6DB4"           
+        BORDER = "#3D3D3D"            
+        TEXT = "#F8F9FA"         
+        DISABLED = "#495057"           
+        CHECKMARK = "#FFFFFF"        
+        GLOW = "rgba(74, 144, 226, 0.2)"
+    
+    class Special:
+        ERROR_TEXT = "#F87171"
+        HEADER_ACCENT = "#357ABD"
+        HIGHLIGHT_TEXT = "#FFFFFF"
+        BULLET_POINTS = "#8e44ad"
+        FOOTER_TEXT = "#7f8c8d" 
+
+"""
 class Colors:
     PRIMARY = "#FFFFFF"  
     SECONDARY = "#F5F5F5"  
@@ -41,14 +112,14 @@ class Colors:
     class Cards:
         BACKGROUND = "#ecf0f1"
         BORDER = "#3498db"
-    
-    class Special:
-        ERROR_TEXT = "#D94E63"
-        HEADER_ACCENT = "#1565C0"
-        HIGHLIGHT_TEXT = "#e67e22"
-        BULLET_POINTS = "#8e44ad"
-        FOOTER_TEXT = "#7f8c8d"   
 
+    class Special:
+        ERROR_TEXT = "#F87171"
+        HEADER_ACCENT = "#357ABD"
+        HIGHLIGHT_TEXT = "#FFFFFF"
+        BULLET_POINTS = "#8e44ad"
+        FOOTER_TEXT = "#7f8c8d" 
+"""
 
 class PrimaryButton(ctk.CTkButton):
     def __init__(self, master, text, width=200, height=50, **kwargs):

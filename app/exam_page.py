@@ -1,28 +1,23 @@
 import customtkinter as ctk
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
 from ui_components import Colors
 from tkinter import messagebox
+from rich import print
 from datetime import datetime, timedelta
-from cryptography.exceptions import InvalidKey, InvalidTag
 from PIL import Image
-import os
-import base64
-import json
 import random
-from utils import getPath, centerWindow
+from utils import getPath
 
 class ExamUI(ctk.CTkFrame):
     def __init__(self, master, subject_details, student_data, questions, parent):
         super().__init__(master, fg_color=Colors.PRIMARY)
         self.master = master
         self.parent = parent
+        self.raw_questions = questions
         self.subject = subject_details
         self.student = student_data
-        random.shuffle(questions)
-        self.questions = questions
+        questions_list = list(questions.values())
+        random.shuffle(questions_list)
+        self.questions = questions_list
         self.student_key = None
         self.answers = {}
 
@@ -99,7 +94,7 @@ class ExamUI(ctk.CTkFrame):
             ctk.CTkLabel(instructions_frame, text=f"{instr}", 
                          font=("Calibri", 11), 
                          text_color=Colors.Special.BULLET_POINTS,
-                         wraplength=220).pack(anchor="w", pady=2, padx=2)
+                         wraplength=220, justify="left").pack(anchor="w", pady=2, padx=2)
     
     def check_exam_status(self):
         if datetime.now() < self.exam_start:
@@ -194,12 +189,12 @@ class ExamUI(ctk.CTkFrame):
         
         submitted_answers = {q_num: var.get() for q_num, var in self.answers.items()}
         self.student_key = submitted_answers
+        self.mapped_questions = self.subject["question_mapping"]
+        self.user_response = self.convert_answer_key(self.mapped_questions, self.student_key)
         self.answer_key = self.subject["answer_key"]
-        self.marks_per_question = self.get_marks_per_question(self.questions)
+        self.marks_per_question = self.get_marks_per_question(self.raw_questions)
 
-        results = self.evaluate_exam(user_responses=self.student_key, correct_answers=self.answer_key, marks_per_question=self.marks_per_question)
-        print(results)
-        
+        results = self.evaluate_exam(user_responses=self.user_response, correct_answers=self.answer_key, marks_per_question=self.marks_per_question)
 
         self.master.destroy()
 
@@ -299,6 +294,7 @@ class ExamUI(ctk.CTkFrame):
         self.create_answer_input(q_frame, question, display_idx)
 
 
+    @staticmethod
     def evaluate_exam(user_responses, correct_answers, marks_per_question):
         result = {
             "total_score": 0, 
@@ -314,10 +310,10 @@ class ExamUI(ctk.CTkFrame):
         }
 
         for question_id, correct_answer in correct_answers.items():
-            user_answer = user_responses.get(question_id, "").strip()
+            user_answer = user_responses.get(question_id, "")
             question_marks = int(marks_per_question.get(question_id, 1)) 
 
-            if not user_answer:
+            if user_answer == "":
                 result["not_attempted"] += 1
                 result["not_attempted_ids"].append(question_id)
                 result["marks_not_attempted"] += question_marks 
@@ -341,3 +337,7 @@ class ExamUI(ctk.CTkFrame):
                 question_marks_details[question_id] = details.get("marks", 1)
 
         return question_marks_details
+
+    @staticmethod
+    def convert_answer_key(question_id_mapping, user_answer_key):
+        return {q_number: user_answer_key[q_id] for q_number, q_id in question_id_mapping.items() if q_id in user_answer_key}
