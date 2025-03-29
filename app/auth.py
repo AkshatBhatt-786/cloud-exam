@@ -46,9 +46,11 @@ class FirebaseAuth:
                 return None
             
             student_data = student.to_dict()
+            
             stored_password = student_data.get("password")
 
             if stored_password == hashlib.sha256(password.encode()).hexdigest():
+                student_data["enrollment_no"] = enrollment
                 return student_data 
             else:
                 return None 
@@ -83,3 +85,23 @@ class FirebaseAuth:
             return True
         except Exception as e:
             messagebox.showerror("Registeration Failed", f"Failed to register student: {e}")
+
+    def add_student_result(self, exam_id, roll_number, result):
+        if not self.database_connected:
+            print("Database is not connected!")
+            return False
+
+        try:
+            exam_ref = self.db.collection("exams").document(exam_id)
+            exam = exam_ref.get()
+            if not exam.exists:
+                return False
+            
+            exam_ref.update({
+                f"students.{roll_number}": result
+            })
+            return True
+        
+        except Exception as e:
+            print(f"Error adding student result: {e}")
+            return False

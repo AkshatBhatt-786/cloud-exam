@@ -5,11 +5,7 @@ from auth_view import CloudAuthView
 from exam_portal_page import ExamPortalPage
 from exam_page import ExamUI
 from ui_components import *
-from home import *
-import time
 from PIL import Image
-import threading
-
 
 class CloudExamApp(ctk.CTk):
 
@@ -21,8 +17,8 @@ class CloudExamApp(ctk.CTk):
         self.iconbitmap(bitmap=getPath("assets\\icons\\icon.ico"))
         self.content_frame = None
         
-        # self.user_manager = FirebaseAuth()
-        # self.auth_view = CloudAuthView(self.user_manager, self.on_login_success)
+        self.user_manager = FirebaseAuth()
+        self.auth_view = CloudAuthView(self.user_manager, self.on_login_success)
 
         self.icon_frame, self.name_frame = None, None
         self.start_pos = 0
@@ -59,8 +55,7 @@ class CloudExamApp(ctk.CTk):
         self.sidebar.place(relx=self.start_pos, rely=0.14, relwidth=self.width, relheight=0.8)
         self.sidebar.columnconfigure((0, 1), weight=1)
         self.sidebar.rowconfigure(0, weight=1)
-        self.sample_data = {'password': '60eb1689a714251b68e5049bc97fb661728287d6bc8addc77c899cbdcee984b2', 'exams': {}, 'college_id': 'IT060786', 'name': 'Bhatt Akshat Sanjaybhai', 'enrollment_no': '226490316024'}
-        # self.auth_view.run()
+        self.auth_view.run()
         self.mainloop()
 
     def on_login_success(self):
@@ -201,7 +196,7 @@ class CloudExamApp(ctk.CTk):
             questions = kwargs.get("questions")
             self.attributes("-topmost", True)
             # self.overrideredirect(True)
-            self.exam_portal_page = ExamUI(self, subject_details=subject_details, student_data=self.sample_data, questions=questions, parent=self)
+            self.exam_portal_page = ExamUI(self, subject_details=subject_details, student_data=self.auth_view.student_data, questions=questions, parent=self)
             self.exam_portal_page.pack(padx=10, pady=10, anchor="center")
 
 if __name__ == "__main__":

@@ -135,10 +135,10 @@ class ExamPortalPage(ctk.CTkFrame):
 
         dbx_backend = DropboxBackend(access_token, app_key, app_secret, getPath("database\\temp"))
 
-        # file_exists = dbx_backend.download_file(dropbox_path=f"/uploads/{self.exam_id_entry.get().upper()}.enc", local_path=getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}.enc"))
-        # if not file_exists:
-        #     self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
-        #     return
+        file_exists = dbx_backend.download_file(dropbox_path=f"/uploads/{self.exam_id_entry.get().upper()}.enc", local_path=getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}.enc"))
+        if not file_exists:
+            self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
+            return
 
         filepath = getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}") + ".enc"
         access_code = self.access_code_entry.get()
@@ -187,6 +187,8 @@ class ExamPortalPage(ctk.CTkFrame):
                     text="You are registered! Redirecting to exam (questions hidden until start time).", 
                     text_color="green"
                 )
+                sub_details["exam-id"] = self.exam_id_entry.get().upper()
+                sub_details["access-code"] = self.access_code_entry.get().upper()
                 self.after(3000, lambda: self.parent.redirect("exam-page", subject_details=sub_details, questions=questions_data))
 
             else:

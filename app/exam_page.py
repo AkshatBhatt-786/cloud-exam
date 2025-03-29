@@ -196,6 +196,8 @@ class ExamUI(ctk.CTkFrame):
 
         results = self.evaluate_exam(user_responses=self.user_response, correct_answers=self.answer_key, marks_per_question=self.marks_per_question)
 
+        self.parent.user_manager.add_student_result(self.subject["exam-id"], self.student["enrollment_no"], results)
+
         self.master.destroy()
 
 
@@ -341,3 +343,4 @@ class ExamUI(ctk.CTkFrame):
     @staticmethod
     def convert_answer_key(question_id_mapping, user_answer_key):
         return {q_number: user_answer_key[q_id] for q_number, q_id in question_id_mapping.items() if q_id in user_answer_key}
+        
