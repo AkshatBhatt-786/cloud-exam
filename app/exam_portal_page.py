@@ -1,24 +1,19 @@
-import customtkinter as ctk
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-from datetime import datetime
-import dropbox
-import re
-from datetime import datetime, timedelta
-from dropbox.exceptions import ApiError, AuthError, BadInputError, InternalServerError
-from dropbox.files import WriteMode
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.exceptions import InvalidKey, InvalidTag
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from dropbox.exceptions import ApiError, AuthError, BadInputError, InternalServerError
+from datetime import datetime
+from ui_components import *
+from utils import getPath
+import dropbox
+import customtkinter as ctk
 import os
-from rich import print
-import sys
 import base64
 import json
-import time
-from utils import getPath
 
-DBX_PATH = getPath("database\\dbx_backend.json")
+DBX_PATH = os.getenv("DBX_BACKEND")
 
 class DropboxBackend:
 
@@ -77,39 +72,42 @@ class ExamPortalPage(ctk.CTkFrame):
         self.parent = parent
         self.maximized = False
 
+        self.procedure_frame = ctk.CTkFrame(self.master, fg_color=Colors.SECONDARY, border_color=Colors.PRIMARY)
+        self.procedure_frame.place(relx=0.5, rely=0.5, anchor="center")
+
         self.procedure_label = ctk.CTkLabel(
-            self.master, text="Maximize the application screen to proceed further",
+            self.procedure_frame, text="Maximize the application screen to proceed further",
             font=("Consolas", 16, "bold"),
-            text_color="#333333"
+            text_color=Colors.Texts.HEADERS
         )
         self.procedure_label.pack(padx=10, pady=10, anchor="center")
 
         self.check_responsiveness()
 
     def build(self):
-        ctk.CTkLabel(self.master, text="Welcome to the Cloud Exam Portal", font=("Calibri", 18, "bold"), text_color="#2c3e50").place(relx=0.5, rely=0.07, anchor="center")
-        ctk.CTkLabel(self.master, text="Your organization has assigned you an exam to complete through this platform. Use the Exam ID and Access code provided to log in and begin your assessment.", font=("Calibri", 14), justify="center", text_color="#34495e", wraplength=700).place(relx=0.5, rely=0.15, anchor="center")
-        frame = ctk.CTkFrame(self.master, fg_color="#ecf0f1", border_color="#3498db", border_width=2, corner_radius=10, width=600, height=400)
+        ctk.CTkLabel(self.master, text="Welcome to the Cloud Exam Portal", font=("Calibri", 18, "bold"), text_color=Colors.HIGHLIGHT).place(relx=0.5, rely=0.07, anchor="center")
+        ctk.CTkLabel(self.master, text="Your organization has assigned you an exam to complete through this platform. Use the Exam ID and Access code provided to log in and begin your assessment.", font=("Calibri", 14), justify="center", text_color=Colors.Texts.HEADERS, wraplength=700).place(relx=0.5, rely=0.15, anchor="center")
+        frame = ctk.CTkFrame(self.master, fg_color=Colors.Cards.BACKGROUND, border_color=Colors.Cards.BORDER, border_width=2, corner_radius=10, width=600, height=400)
         frame.place(relx=0.5, rely=0.5, anchor="center")
         frame.pack_propagate(False)
 
-        ctk.CTkLabel(frame, text="EXAM PORTAL", font=("Calibri", 18, "bold"), text_color="#3498db").pack(padx=10, pady=10, anchor="center")
+        ctk.CTkLabel(frame, text="EXAM PORTAL", font=("Calibri", 18, "bold"), text_color=Colors.Texts.HEADERS).pack(padx=10, pady=10, anchor="center")
 
         self.exam_id_frame = ctk.CTkFrame(frame, fg_color="transparent")
         self.exam_id_frame.pack(pady=10, anchor="center", fill="x", padx=25)
-        self.exam_id_label = ctk.CTkLabel(self.exam_id_frame, text_color="#2c3e50", text="EXAM ID       ", font=("Calibri", 16, "bold"))
+        self.exam_id_label = ctk.CTkLabel(self.exam_id_frame, text_color=Colors.Texts.FIELDS, text="EXAM ID       ", font=("Calibri", 16, "bold"))
         self.exam_id_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        self.exam_id_entry = ctk.CTkEntry(self.exam_id_frame, text_color="#34495e", placeholder_text_color="#95a5a6", border_color="#bdc3c7", placeholder_text="Enter Exam-ID", fg_color="#F5F5F5", height=42, width=280)
+        self.exam_id_entry = ctk.CTkEntry(self.exam_id_frame, text_color=Colors.Inputs.TEXT, placeholder_text_color=Colors.Inputs.PLACEHOLDER, border_color=Colors.Inputs.BORDER, placeholder_text="Enter Exam-ID", fg_color=Colors.Inputs.BACKGROUND, height=42, width=280)
         self.exam_id_entry.grid(row=0, column=1, pady=5, sticky="w", padx=28)
 
         self.access_code_frame = ctk.CTkFrame(frame, fg_color="transparent")
         self.access_code_frame.pack(pady=10, anchor="center", fill="x", padx=25)
-        self.password_label = ctk.CTkLabel(self.access_code_frame, text_color="#2c3e50", text="ACCESS CODE", font=("Calibri", 16, "bold"))
+        self.password_label = ctk.CTkLabel(self.access_code_frame, text_color=Colors.Texts.HEADERS, text="ACCESS CODE", font=("Calibri", 16, "bold"))
         self.password_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        self.access_code_entry = ctk.CTkEntry(self.access_code_frame, text_color="#34495e", placeholder_text_color="#95a5a6", border_color="#bdc3c7", placeholder_text="Enter Access Code", fg_color="#F5F5F5", height=42, width=280, show="●")
+        self.access_code_entry = ctk.CTkEntry(self.access_code_frame, text_color=Colors.Inputs.TEXT, placeholder_text_color=Colors.Inputs.PLACEHOLDER, border_color=Colors.Inputs.BORDER, placeholder_text="Enter Access Code", fg_color=Colors.Inputs.BACKGROUND, height=42, width=280, show="●")
         self.access_code_entry.grid(row=0, column=1, padx=19.5, pady=5, sticky="w")
 
-        self.access_exam_btn = ctk.CTkButton(frame, fg_color="#3498db", hover_color="#2980b9", text_color="#FFFFFF", corner_radius=10, text="Apply For Exam", width=180, height=42,
+        self.access_exam_btn = PrimaryButton(frame, text="Apply For Exam", width=180, height=42,
                                              command=lambda: self.authenticate_paper())
         self.access_exam_btn.pack(pady=30, padx=30, anchor="center")
 
@@ -124,7 +122,7 @@ class ExamPortalPage(ctk.CTkFrame):
         self.access_code_entry.delete(0, "end")
 
     def authenticate_paper(self):
-        self.validation_status.configure(text="Connecting...", text_color="blue")
+        self.validation_status.configure(text="Connecting...", text_color=Colors.Texts.HEADERS)
         
         with open(DBX_PATH, "r") as f:
             data = json.load(f)
@@ -133,29 +131,29 @@ class ExamPortalPage(ctk.CTkFrame):
         app_key = data["app_key"]
         app_secret = data["app_secret"]
 
-        dbx_backend = DropboxBackend(access_token, app_key, app_secret, getPath("database\\temp"))
 
+        dbx_backend = DropboxBackend(access_token, app_key, app_secret, getPath("database\\temp"))
         file_exists = dbx_backend.download_file(dropbox_path=f"/uploads/{self.exam_id_entry.get().upper()}.enc", local_path=getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}.enc"))
         if not file_exists:
-            self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
+            self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color=Colors.Special.ERROR_TEXT)
             return
 
         filepath = getPath(f"database\\temp\\{self.exam_id_entry.get().upper()}") + ".enc"
         access_code = self.access_code_entry.get()
 
         if not os.path.exists(filepath):
-            self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
+            self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color=Colors.Special.ERROR_TEXT)
             self.clear_input_fields()
             return
 
-        self.validation_status.configure(text="Authorizing...", text_color="blue")
+        self.validation_status.configure(text="Authorizing...", text_color=Colors.Special.HIGHLIGHT_TEXT)
         with open(filepath, 'r') as f:
             encrypted_data = json.load(f)
 
         try:
             decrypted_data = self._decrypt_data(encrypted_data, access_code)
             if not decrypted_data:
-                self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color="red")
+                self.validation_status.configure(text="Exam ID or Access Code is incorrect both are case-sensitive", text_color=Colors.Special.ERROR_TEXT)
                 self.clear_input_fields()
                 return
 
@@ -178,7 +176,7 @@ class ExamPortalPage(ctk.CTkFrame):
             if current_time < exam_datetime:
                 self.validation_status.configure(
                     text=f"Registration is open, but you must wait until the exam registration starts.\nTry again on {registration_time}.", 
-                    text_color="blue"
+                    text_color=Colors.Special.HIGHLIGHT_TEXT
                 )
                 return 
 
@@ -192,10 +190,10 @@ class ExamPortalPage(ctk.CTkFrame):
                 self.after(3000, lambda: self.parent.redirect("exam-page", subject_details=sub_details, questions=questions_data))
 
             else:
-                self.validation_status.configure(text="Registration is closed.", text_color="red")
+                self.validation_status.configure(text="Registration is closed.", text_color=Colors.Special.ERROR_TEXT)
 
         except Exception as e:
-            self.validation_status.configure(text="Error during authentication.", text_color="red")
+            self.validation_status.configure(text="Error during authentication.", text_color=Colors.Special.ERROR_TEXT)
             print("Error:", e)
 
 

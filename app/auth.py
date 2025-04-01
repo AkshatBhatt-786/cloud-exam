@@ -13,11 +13,12 @@ class FirebaseAuth:
 
         if service_account_json:
             try:
-                cred_dict = json.load(open(service_account_json))
-                cred = credentials.Certificate(cred_dict)
-                firebase_admin.initialize_app(cred)
-                self.db = firestore.client()
-                self.database_connected = True
+                with open(service_account_json, "r") as f:
+                    cred_dict = json.load(f)
+                    cred = credentials.Certificate(cred_dict)
+                    firebase_admin.initialize_app(cred)
+                    self.db = firestore.client()
+                    self.database_connected = True
             except Exception as e:
                 print(f"Error initializing Firebase: {e}")
                 self.database_connected = False

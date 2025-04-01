@@ -10,6 +10,7 @@ import threading
 import tkinter as tk
 from utils import getPath, centerWindow
 
+
 class CloudAuthView(ctk.CTkToplevel):
     def __init__(self, firebase_auth, on_login_success):
         super().__init__()
@@ -253,7 +254,7 @@ class CloudAuthView(ctk.CTkToplevel):
         enrollment = self.login_enrollment.get()
         password = self.login_password.get()
 
-        self.login_status.configure(text="Authenticating...", text_color="blue")
+        self.login_status.configure(text="Authenticating...", text_color=Colors.Special.HIGHLIGHT_TEXT)
 
         def login_task():
             try:

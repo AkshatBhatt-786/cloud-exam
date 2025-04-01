@@ -40,11 +40,11 @@ class ExamUI(ctk.CTkFrame):
         sidebar.grid(row=0, column=0, sticky="nsew", padx=(0, 2), pady=2)
         sidebar.grid_propagate(False)
 
-        details_frame = ctk.CTkFrame(sidebar, fg_color="transparent")
+        details_frame = ctk.CTkFrame(sidebar, fg_color=Colors.Cards.BACKGROUND, border_color=Colors.Cards.BORDER)
         details_frame.pack(pady=15, padx=10, fill="x")
         
-        ctk.CTkLabel(details_frame, text="Exam Details", 
-                    font=("Calibri", 16, "bold"), 
+        ctk.CTkLabel(details_frame, text="Exam Details: ", 
+                    font=("Calibri", 18, "bold"), 
                     text_color=Colors.Texts.HEADERS).pack(anchor="w")
         
         details = [
@@ -58,14 +58,14 @@ class ExamUI(ctk.CTkFrame):
         for label, value in details:
             ctk.CTkLabel(details_frame, text=f"{label}: {value}", 
                         font=("Calibri", 12), 
-                        text_color=Colors.Sidebar.TEXT).pack(anchor="w", pady=(10, 0))
+                        text_color=Colors.Texts.HEADERS).pack(anchor="w", pady=(10, 0), padx=(10, 0))
 
-        student_frame = ctk.CTkFrame(sidebar, fg_color=Colors.Sidebar.SECTION_BG)
+        student_frame = ctk.CTkFrame(sidebar, fg_color=Colors.Cards.BACKGROUND, border_color=Colors.Cards.BORDER)
         student_frame.pack(pady=15, padx=10, fill="x")
         
-        ctk.CTkLabel(student_frame, text="Candidate Details", 
-                    font=("Calibri", 14, "bold"), 
-                    text_color=Colors.Texts.HEADERS).pack(anchor="w", padx=10, pady=10)
+        ctk.CTkLabel(student_frame, text="Candidate Details: ", 
+                    font=("Calibri", 18, "bold"), 
+                    text_color=Colors.Texts.HEADERS).pack(anchor="w")
         
         student_info = [
             ("Name", self.student['name']),
@@ -76,7 +76,8 @@ class ExamUI(ctk.CTkFrame):
         for label, value in student_info:
             ctk.CTkLabel(student_frame, text=f"{label}: {value}", 
                         font=("Calibri", 12, "bold"), 
-                        text_color=Colors.Sidebar.TEXT).pack(anchor="w", padx=2, pady=2)
+                        text_color=Colors.Sidebar.TEXT).pack(anchor="w", padx=(10, 0), pady=(10, 0))
+            
 
         self.timer_label = ctk.CTkLabel(sidebar, text="00:00:00", 
                                       font=("Consolas", 26, "bold"),
@@ -86,15 +87,15 @@ class ExamUI(ctk.CTkFrame):
         instructions_frame = ctk.CTkFrame(sidebar, fg_color=Colors.Sidebar.SECTION_BG)
         instructions_frame.pack(pady=15, padx=10, fill="x")
         
-        ctk.CTkLabel(instructions_frame, text="Instructions", 
+        ctk.CTkLabel(instructions_frame, text="Instructions: ", 
                     font=("Calibri", 14, "bold"), 
-                    text_color=Colors.Texts.HEADERS).pack(anchor="w", padx=10, pady=10)
+                    text_color=Colors.Texts.HEADERS).pack(anchor="w")
         
         for instr in self.subject['instructions']:
             ctk.CTkLabel(instructions_frame, text=f"{instr}", 
                          font=("Calibri", 11), 
                          text_color=Colors.Special.BULLET_POINTS,
-                         wraplength=220, justify="left").pack(anchor="w", pady=2, padx=2)
+                         wraplength=220, justify="left").pack(anchor="w", pady=(10, 0), padx=(10, 0))
     
     def check_exam_status(self):
         if datetime.now() < self.exam_start:

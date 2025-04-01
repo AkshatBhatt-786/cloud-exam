@@ -6,6 +6,10 @@ from exam_portal_page import ExamPortalPage
 from exam_page import ExamUI
 from ui_components import *
 from PIL import Image
+# import logging
+# import grpc
+
+# grpc._cython.cygrpc.set_default_logger_severity(logging.CRITICAL)
 
 class CloudExamApp(ctk.CTk):
 
@@ -56,7 +60,7 @@ class CloudExamApp(ctk.CTk):
         self.sidebar.columnconfigure((0, 1), weight=1)
         self.sidebar.rowconfigure(0, weight=1)
         self.auth_view.run()
-        self.mainloop()
+        # self.mainloop()
 
     def on_login_success(self):
         # print(self.auth_view.student_data)
