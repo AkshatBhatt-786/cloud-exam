@@ -4,12 +4,10 @@ from auth import FirebaseAuth
 from auth_view import CloudAuthView
 from exam_portal_page import ExamPortalPage
 from exam_page import ExamUI
+from home import HomePage
 from ui_components import *
 from PIL import Image
-# import logging
-# import grpc
 
-# grpc._cython.cygrpc.set_default_logger_severity(logging.CRITICAL)
 
 class CloudExamApp(ctk.CTk):
 
@@ -63,7 +61,6 @@ class CloudExamApp(ctk.CTk):
         # self.mainloop()
 
     def on_login_success(self):
-        # print(self.auth_view.student_data)
         self.auth_view.destroy()
         self.mainloop()
 
@@ -185,8 +182,8 @@ class CloudExamApp(ctk.CTk):
 
         if page_name == "home-page":
             self.title("CLoud Exam v1.0.0 (beta)")
-            # self.result_page = ResultsPage(self.main_content)
-            # self.result_page.pack(padx=10, pady=10, anchor="center")
+            self.home_page = HomePage(parent=self, master=self.main_content, student_data=self.auth_view.student_data)
+            self.home_page.pack(padx=10, pady=10, anchor="center")
         
         if page_name == "exam-portal":
             self.title("Exam Portal | Cloud Exam")
@@ -199,7 +196,7 @@ class CloudExamApp(ctk.CTk):
             subject_details = kwargs.get("subject_details")
             questions = kwargs.get("questions")
             self.attributes("-topmost", True)
-            # self.overrideredirect(True)
+            self.overrideredirect(True)
             self.exam_portal_page = ExamUI(self, subject_details=subject_details, student_data=self.auth_view.student_data, questions=questions, parent=self)
             self.exam_portal_page.pack(padx=10, pady=10, anchor="center")
 

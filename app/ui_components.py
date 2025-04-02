@@ -1,54 +1,5 @@
 import customtkinter as ctk
 
-# class Colors:
-#     PRIMARY = "#FFFFFF"  
-#     SECONDARY = "#F5F5F5"  
-#     ACCENT = "#3498db" 
-#     HIGHLIGHT = "#22D3EE"  
-#     SUCCESS = "#4ADE80" 
-#     WARNING = "#FACC15"  
-#     DANGER = "#D94E63"
-#     BACKGROUND = "#FFFFFF" 
-    
-#     class Texts:
-#         HEADERS = "#2c3e50"  
-#         FIELDS = "#34495e"  
-#         PLACEHOLDER = "#95a5a6"  
-#         BORDER = "#bdc3c7"  
-
-#     class Sidebar:
-#         BACKGROUND = "#F2F9FA"
-#         BORDER = "#FFD3BA"
-#         HOVER = "#A8DADC" 
-#         TEXT = "#4A4A4A"
-#         SECTION_BG = "#B0E5E8"
-#         BUTTON_BG = "#C4E4E7"
-
-#     class Buttons:
-#         PRIMARY = "#3498db"  
-#         PRIMARY_HOVER = "#2980b9"  
-#         SECONDARY = "#C4E4E7"  
-#         SECONDARY_HOVER = "#A8DADC"
-#         DISABLED = "#94A3B8"
-#         TEXT = "#FFFFFF"
-    
-#     class Inputs:
-#         BACKGROUND = "#F5F5F5"
-#         BORDER = "#bdc3c7"
-#         TEXT = "#34495e"
-#         PLACEHOLDER = "#95a5a6"
-    
-#     class Cards:
-#         BACKGROUND = "#ecf0f1"
-#         BORDER = "#3498db"
-
-#     class Special:
-#         ERROR_TEXT = "#F87171"
-#         HEADER_ACCENT = "#357ABD"
-#         HIGHLIGHT_TEXT = "#FFFFFF"
-#         BULLET_POINTS = "#8e44ad"
-#         FOOTER_TEXT = "#7f8c8d" 
-
 class Colors:
 
     PRIMARY = "#121826"  
