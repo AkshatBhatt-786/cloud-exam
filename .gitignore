@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 serviceAccountKey.json
-database/dbx_backend.json
+app/database/dbx_backend.json
