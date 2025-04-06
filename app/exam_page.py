@@ -174,19 +174,15 @@ class ExamUI(ctk.CTkFrame):
 
 
     def submit_exam(self, timeout=False):
-        if timeout:
-            submitted_answers = {q_num: var.get() for q_num, var in self.answers.items()}
-            self.student_key = submitted_answers
-            self.master.destroy()
-            return
+        if not timeout:
 
-        confirm = messagebox.askyesno(
-        title="Submit Exam?",
-        message="Are you sure you want to submit the exam? You cannot change your answers after submission.",
-        )
+            confirm = messagebox.askyesno(
+            title="Submit Exam?",
+            message="Are you sure you want to submit the exam? You cannot change your answers after submission.",
+            )
     
-        if not confirm:
-            return  
+            if not confirm:
+               return  
         
         submitted_answers = {q_num: var.get() for q_num, var in self.answers.items()}
         self.student_key = submitted_answers
@@ -199,13 +195,14 @@ class ExamUI(ctk.CTkFrame):
 
         self.parent.user_manager.add_student_result(self.subject["exam-id"], self.student["enrollment_no"], results)
 
+        messagebox.showinfo("Response Recorded", f"{self.student['enrollment_no']} Response has been recorded.")
         self.master.destroy()
 
 
     def create_answer_input(self, parent, question, q_num):
         input_frame = ctk.CTkFrame(parent, fg_color="transparent")
         input_frame.pack(fill="x", padx=10, pady=(0, 10))
-        
+            
         q_id = question['id']
         if question['type'] == 'MCQ':
             self.answers[q_id] = ctk.StringVar()
@@ -237,7 +234,7 @@ class ExamUI(ctk.CTkFrame):
 
     def create_exam_interface(self):
         if datetime.now() > self.end_time:
-            self.submit_exam()
+            self.submit_exam(timeout=True)
             return
 
         self.main_frame = ctk.CTkFrame(self, fg_color=Colors.PRIMARY)
