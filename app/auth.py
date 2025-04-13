@@ -87,22 +87,28 @@ class FirebaseAuth:
         except Exception as e:
             messagebox.showerror("Registeration Failed", f"Failed to register student: {e}")
 
-    def add_student_result(self, exam_id, roll_number, result):
+    def add_student_result(self, exam_id, enrollment, result):
         if not self.database_connected:
             print("Database is not connected!")
             return False
 
         try:
             exam_ref = self.db.collection("exams").document(exam_id)
-            exam = exam_ref.get()
-            if not exam.exists:
-                return False
-            
-            exam_ref.update({
-                f"students.{roll_number}": result
+            student_ref = self.db.collection("students").document(enrollment)
+            batch = self.db.batch()
+
+            batch.update(exam_ref, {f"students.{enrollment}": result})
+
+            batch.update(student_ref, {
+                f"exams.{exam_id}": {
+                    "status": "completed",
+                    "result": result
+                }
             })
+
+            batch.commit()
             return True
-        
+
         except Exception as e:
             print(f"Error adding student result: {e}")
             return False

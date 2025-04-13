@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from fontTools.ttLib.ttFont import TTFont
+from utils import getPath
 
 class Colors:
 
@@ -69,6 +71,13 @@ class Colors:
         BULLET_POINTS = "#357ABD"
         FOOTER_TEXT = "#7f8c8d" 
 
+BOLD_FONT = TTFont(getPath(r"assets\fonts\DejaVuSansCondensed-Bold.ttf"))
+LIGHT_FONT = TTFont(getPath(r"assets\fonts\DejaVuSans-ExtraLight.ttf"))
+ITALIC_BOLD_FONT = TTFont(getPath(r"assets\fonts\DejaVuSansCondensed-BoldOblique.ttf"))
+ITALIC_FONT = TTFont(getPath(r"assets\fonts\DejaVuSansCondensed-Oblique.ttf"))
+SYSTEM_FONT = TTFont(getPath(r"assets\fonts\DejaVuSansCondensed.ttf")) 
+
+
 class PrimaryButton(ctk.CTkButton):
     def __init__(self, master, text, width=200, height=50, **kwargs):
         super().__init__(
@@ -83,13 +92,14 @@ class PrimaryButton(ctk.CTkButton):
             text_color="white",
             border_width=2,
             cursor="hand2",
+            font=(BOLD_FONT, 14, "bold"),
             **kwargs
         )
 
 class ErrorButton(ctk.CTkButton):
     def __init__(self, master, text, width=200, height=50, **kwargs):
         super().__init__(master, text=text, width=width, height=height,
-                         fg_color=Colors.DANGER, border_color="#E74C3C", corner_radius=8, text_color="white", 
+                         fg_color=Colors.DANGER, border_color="#E74C3C", corner_radius=8, text_color="white", font=(BOLD_FONT, 14, "bold"),
                          border_width=2, hover_color="#FFC080", cursor="hand2", **kwargs)
 
 
@@ -100,6 +110,7 @@ class IconButton(ctk.CTkButton):
             text_color=Colors.Texts.BORDER,
             hover_color=Colors.SECONDARY,
             corner_radius=18,
+            font=(BOLD_FONT, 14, "bold"),
             text="", **kwargs)
         
 class SidebarButton(ctk.CTkButton):

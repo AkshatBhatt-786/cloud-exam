@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from ui_components import Colors
+from ui_components import *
 from tkinter import messagebox
 from rich import print
 from datetime import datetime, timedelta
@@ -192,6 +192,7 @@ class ExamUI(ctk.CTkFrame):
         self.marks_per_question = self.get_marks_per_question(self.raw_questions)
 
         results = self.evaluate_exam(user_responses=self.user_response, correct_answers=self.answer_key, marks_per_question=self.marks_per_question)
+        results["title"] = self.subject["exam_title"]
 
         self.parent.user_manager.add_student_result(self.subject["exam-id"], self.student["enrollment_no"], results)
 
@@ -210,6 +211,7 @@ class ExamUI(ctk.CTkFrame):
                 ctk.CTkRadioButton(input_frame, text=opt,
                                   variable=self.answers[q_id],
                                   value=opt,
+                                  font=(SYSTEM_FONT, 14),
                                   text_color=Colors.Texts.FIELDS).pack(anchor="w", pady=2) 
         
         elif question['type'] == 'True/False':
@@ -229,6 +231,7 @@ class ExamUI(ctk.CTkFrame):
                                fg_color=Colors.Inputs.BACKGROUND,
                                border_color=Colors.Inputs.BORDER,
                                text_color=Colors.Texts.HEADERS,
+                               font=(SYSTEM_FONT, 16),
                                width=400)
             entry.pack(anchor="w", pady=2)
 
@@ -279,15 +282,15 @@ class ExamUI(ctk.CTkFrame):
         header_frame.pack(fill="x", padx=10, pady=5)
 
         ctk.CTkLabel(header_frame, text=f"Question {display_idx}", 
-                    font=("Calibri", 15, "bold"), 
+                    font=(BOLD_FONT, 15, "bold"), 
                     text_color=Colors.Texts.HEADERS).pack(side="left")
 
         ctk.CTkLabel(header_frame, text=f"[{question['marks']} Marks]", 
-                    font=("Calibri", 12), 
+                    font=(SYSTEM_FONT, 12), 
                     text_color=Colors.Special.FOOTER_TEXT).pack(side="left", padx=10)
 
         ctk.CTkLabel(q_frame, text=question['text'], 
-                    font=("Calibri", 14), 
+                    font=(BOLD_FONT, 15, "bold"), 
                     text_color=Colors.Texts.FIELDS,
                     wraplength=800, justify="left").pack(anchor="w", padx=10, pady=(0, 10))
 

@@ -22,7 +22,7 @@ class CloudAuthView(ctk.CTkToplevel):
                 self.after(200, lambda: self.iconbitmap(getPath("assets\\icons\\icon.ico")))
         except Exception:
             pass
-        self.geometry(centerWindow(self, 900, 650))
+        self.geometry(centerWindow(self, 900, 650, self._get_window_scaling(), (0, 100)))
         self.configure(fg_color=Colors.PRIMARY)
         self.resizable(False, False)
         self.student_data = None
@@ -55,7 +55,7 @@ class CloudAuthView(ctk.CTkToplevel):
         ctk.CTkLabel(self.image_frame, text="Secure. Smart. Seamless",
                      font=("Inter", 14), text_color=Colors.Texts.FIELDS).pack()
 
-        ctk.CTkLabel(self.image_frame, text="", image=ctk.CTkImage(light_image=Image.open(getPath("assets\\images\\cloud_logo.png")), size=(220, 220))).pack(pady=50)
+        ctk.CTkLabel(self.image_frame, text="", image=ctk.CTkImage(light_image=Image.open(getPath("assets\\images\\cloud_logo.png")), size=(250, 250))).pack(pady=50)
 
         self.content_frame = ctk.CTkFrame(self.container, width=600, height=700, fg_color=Colors.SECONDARY)
         self.content_frame.pack(side="right", fill="y")
@@ -74,16 +74,16 @@ class CloudAuthView(ctk.CTkToplevel):
         login_frame.configure(width=550, height=600)
         login_frame.pack_propagate(False)
         
-        ctk.CTkLabel(login_frame, text="Welcome Back!", font=("Inter", 16, "bold"), text_color=Colors.Texts.HEADERS).pack(pady=20)
+        ctk.CTkLabel(login_frame, text="Welcome Back!", font=("Inter", 18, "bold"), text_color=Colors.Texts.HEADERS).pack(pady=20)
    
-        ctk.CTkLabel(login_frame, text="Enrollment Number", font=("Inter", 12, "bold"), text_color=Colors.Texts.HEADERS).pack(pady=5)
-        self.login_enrollment = ctk.CTkEntry(login_frame, validate="key", placeholder_text="Enter your Enrollment No", fg_color=Colors.PRIMARY, corner_radius=8, width=280, height=34)
+        ctk.CTkLabel(login_frame, text="Enrollment Number", font=("Inter", 16, "bold"), text_color=Colors.Texts.HEADERS).pack(pady=5)
+        self.login_enrollment = ctk.CTkEntry(login_frame, validate="key", placeholder_text="Enter your Enrollment No", fg_color=Colors.PRIMARY, corner_radius=8, width=280, height=34, font=(SYSTEM_FONT, 14))
         self.login_enrollment.configure(validatecommand=(self.login_enrollment.register(self.validate_numeric_input), '%P'))
         self.login_enrollment.pack(pady=5)
         self.login_enrollment.bind("<KeyRelease>", self.real_time_enrollment_check)
         
-        ctk.CTkLabel(login_frame, text="Password", font=("Inter", 12, "bold"), text_color=Colors.Texts.HEADERS).pack(pady=5)
-        self.login_password = ctk.CTkEntry(login_frame, placeholder_text="Password", show="●", fg_color=Colors.PRIMARY, corner_radius=8, width=280, height=34)
+        ctk.CTkLabel(login_frame, text="Password", font=("Inter", 16, "bold"), text_color=Colors.Texts.HEADERS).pack(pady=5)
+        self.login_password = ctk.CTkEntry(login_frame, placeholder_text="Password", show="●", fg_color=Colors.PRIMARY, corner_radius=8, width=280, height=34, font=(SYSTEM_FONT, 14))
         self.login_password.pack(pady=5)
         
         self.login_status = ctk.CTkLabel(login_frame, text="", text_color="red")
@@ -167,7 +167,7 @@ class CloudAuthView(ctk.CTkToplevel):
             self.name_format_status.configure(text="✓ Valid Username", text_color="green")
         else:
             self.name_valid = False
-            self.name_format_status.configure(text="✓ Enter your full name", text_color="red")
+            self.name_format_status.configure(text="✓ Username is too short", text_color=Colors.Special.ERROR_TEXT)
 
     def validate_numeric_input(self, new_value):
         return new_value.isdigit() and len(new_value) <= 12 or new_value == ""
@@ -176,7 +176,7 @@ class CloudAuthView(ctk.CTkToplevel):
         enrollment = self.login_enrollment.get()
         if len(enrollment) != 12:
             self.login_status.configure(text="Enrollment must be exactly 12 digits", 
-                                      text_color="red")
+                                      text_color=Colors.Special.ERROR_TEXT)
         else:
             self.login_status.configure(text="✓ Valid format", text_color="green")
             
@@ -184,7 +184,7 @@ class CloudAuthView(ctk.CTkToplevel):
         enrollment = self.reg_enrollment.get()
 
         if len(enrollment) != 12:
-            self.enrollment_format_status.configure(text="⨯ Must be 12 digits", text_color="red")
+            self.enrollment_format_status.configure(text="⨯ Must be 12 digits", text_color=Colors.Special.ERROR_TEXT)
             self.enrollment_availability_status.configure(text="◍ Enrollment Available", text_color="gray")
             self.enrollment_valid = False
             return
@@ -193,7 +193,7 @@ class CloudAuthView(ctk.CTkToplevel):
         self.enrollment_availability_status.configure(text="Checking...", text_color="blue")
 
         if not self.internet_connectivity or not self.firebase_auth.database_connected:
-            self.enrollment_availability_status.configure(text="⨯ No internet connection", text_color="red")
+            self.enrollment_availability_status.configure(text="⨯ No internet connection", text_color=Colors.Special.ERROR_TEXT)
             self.enrollment_valid = False
             return
 
@@ -205,10 +205,10 @@ class CloudAuthView(ctk.CTkToplevel):
 
             def update_ui():
                 if exists is None:
-                    self.enrollment_availability_status.configure(text="⨯ Network Error", text_color="red")
+                    self.enrollment_availability_status.configure(text="⨯ Network Error", text_color=Colors.Special.ERROR_TEXT)
                     self.enrollment_valid = False
                 elif exists:
-                    self.enrollment_availability_status.configure(text="⨯ Enrollment Exists", text_color="red")
+                    self.enrollment_availability_status.configure(text="⨯ Enrollment Exists", text_color=Colors.Special.ERROR_TEXT)
                     self.enrollment_valid = False
                 else:
                     self.enrollment_availability_status.configure(text="✓ Enrollment Available", text_color="green")
@@ -227,10 +227,10 @@ class CloudAuthView(ctk.CTkToplevel):
                 self.college_status.configure(text="✓ College ID Valid", text_color="green")
                 self.college_valid = True
             else:
-                self.college_status.configure(text="⨯ Invalid College ID", text_color="red")
+                self.college_status.configure(text="⨯ Invalid College ID", text_color=Colors.Special.ERROR_TEXT)
                 self.college_valid = False
         else:
-            self.college_status.configure(text="⨯ Invalid College ID", text_color="red")
+            self.college_status.configure(text="⨯ Invalid College ID", text_color=Colors.Special.ERROR_TEXT)
             self.college_valid = False
 
     def check_password_strength(self, event):
@@ -239,7 +239,7 @@ class CloudAuthView(ctk.CTkToplevel):
             self.password_status.configure(text="✓ Strong Password", text_color="green")
             self.password_strong = True
         else:
-            self.password_status.configure(text="⨯ Weak Password", text_color="red")
+            self.password_status.configure(text="⨯ Weak Password", text_color=Colors.Special.ERROR_TEXT)
             self.password_strong = False
 
     def check_password_match(self, event):
@@ -247,7 +247,7 @@ class CloudAuthView(ctk.CTkToplevel):
             self.match_status.configure(text="✓ Passwords Match", text_color="green")
             self.passwords_match = True
         else:
-            self.match_status.configure(text="⨯ Passwords Don't Match", text_color="red")
+            self.match_status.configure(text="⨯ Passwords Don't Match", text_color=Colors.Special.ERROR_TEXT)
             self.passwords_match = False
 
     def attempt_login(self):
@@ -270,7 +270,7 @@ class CloudAuthView(ctk.CTkToplevel):
                     self.on_login_success()
                 else:
                     error_text = "Invalid enrollment or password"
-                    self.login_status.configure(text=f"⨯ {error_text}", text_color="red")
+                    self.login_status.configure(text=f"⨯ {error_text}", text_color=Colors.Special.ERROR_TEXT)
 
             self.after(0, update_ui)
 
