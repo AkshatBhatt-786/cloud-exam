@@ -1,4 +1,3 @@
-
 import customtkinter as ctk
 from typing import Tuple
 import os
@@ -18,14 +17,13 @@ def centerWindow(parent: ctk.CTk, width: int, height: int, scale_factor: float =
     return f"{width}x{height}+{scaled_width}+{scaled_height}"
 
 
-def getPath(filepath):
-    try:
-        base_path = sys._MEIPASS
-    except AttributeError:
-        base_path = os.path.abspath("")
+def getPath(*args):
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
     
-    return os.path.join(base_path, filepath)
-
+    return os.path.join(base_path, *args)
 
 def restartApplication():
     try:

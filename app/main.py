@@ -1,9 +1,12 @@
+import os
 import customtkinter as ctk
+from tkinter import messagebox
 from utils import centerWindow, getPath
 from auth import FirebaseAuth
 from auth_view import CloudAuthView
 from exam_portal_page import ExamPortalPage
 from exam_page import ExamUI
+from dashboard import Dashboard
 from home import HomePage
 from ui_components import *
 from PIL import Image
@@ -20,7 +23,7 @@ class CloudExamApp(ctk.CTk):
         self.content_frame = None
         
         self.user_manager = FirebaseAuth()
-        self.auth_view = CloudAuthView(self.user_manager, self.on_login_success)
+        self.auth_view = CloudAuthView(self.user_manager, self.on_login_success, parent=self)
 
         self.icon_frame, self.name_frame = None, None
         self.start_pos = 0
@@ -58,10 +61,16 @@ class CloudExamApp(ctk.CTk):
         self.sidebar.columnconfigure((0, 1), weight=1)
         self.sidebar.rowconfigure(0, weight=1)
         self.auth_view.run()
+        # self.on_login_success()
         # self.mainloop()
 
     def on_login_success(self):
+        firebase_config, dropbox_config = os.getenv("FIREBASE_CONFIG"), os.getenv("DBX_BACKEND")
+        if firebase_config is None or dropbox_config is None:
+            self.destroy()
+            return
         self.auth_view.destroy()
+        self.redirect("home-page")
         self.mainloop()
 
     def _create_name_frame(self):
@@ -147,12 +156,19 @@ class CloudExamApp(ctk.CTk):
         )
         self.home_btn.grid(row=1, column=0, pady=20, padx=5, sticky="nsew")
 
+        self.dashboard_btn = IconButton(
+            self.icon_frame,
+            image=ctk.CTkImage(light_image=Image.open(getPath("assets\\images\\id-card.png")), size=(30, 30)),
+            command=lambda: self.redirect("dashboard")
+        )
+        self.dashboard_btn.grid(row=2, column=0, pady=20, padx=5, sticky="nsew")
+
         self.exam_portal_btn = IconButton(
             self.icon_frame,
             image=ctk.CTkImage(light_image=Image.open(getPath("assets\\images\\exam_portal.png")), size=(30, 30)),
             command=lambda: self.redirect(page_name="exam-portal")
         )
-        self.exam_portal_btn.grid(row=2, column=0, pady=20, padx=5, sticky="nsew")
+        self.exam_portal_btn.grid(row=3, column=0, pady=20, padx=5, sticky="nsew")
 
     def animate(self):
         if self.in_start_pos:
@@ -184,8 +200,18 @@ class CloudExamApp(ctk.CTk):
             self.title("CLoud Exam v1.0.0 (beta)")
             self.home_page = HomePage(parent=self, master=self.main_content, student_data=self.auth_view.student_data)
             self.home_page.pack(padx=10, pady=10, anchor="center")
+
+        if page_name == "dashboard":
+            self.title("Cloud Exam | Student Dashboard")
+            self.student_dashboard = Dashboard(parent=self, master=self.main_content, student_data=self.auth_view.student_data)
+            self.student_dashboard.pack(padx=10, pady=10, anchor="center")
         
         if page_name == "exam-portal":
+            firebase_config, dropbox_config = os.getenv("FIREBASE_CONFIG"), os.getenv("DBX_BACKEND")
+            if firebase_config is None or dropbox_config is None:
+                messagebox.showinfo("Environment Not Configured", "This feature requires specific environments that are not detected in the system PATH.\nAccess is restricted until all required environments are properly configured.\n\nPlease contact the developer for assistance or configuration support.")
+                self.redirect("home-page")
+                return
             self.title("Exam Portal | Cloud Exam")
             self.exam_portal_page = ExamPortalPage(self.main_content, self)
             self.exam_portal_page.pack(padx=10, pady=10, anchor="center")

@@ -1,21 +1,30 @@
-from auth import FirebaseAuth
-import customtkinter as ctk
-from PIL import Image
-import re
+import tkinter as tk
+import time
+import os
 import sys
+import re
+import threading
+import customtkinter as ctk
+from auth import FirebaseAuth
+from PIL import Image
 from tkinter import messagebox
 from ui_components import *
-import time
-import threading
-import tkinter as tk
 from utils import getPath, centerWindow
+from splash_screen import SplashScreen
+
 
 
 class CloudAuthView(ctk.CTkToplevel):
-    def __init__(self, firebase_auth, on_login_success):
+    def __init__(self, firebase_auth, on_login_success, **kwargs):
         super().__init__()
-        self.firebase_auth = firebase_auth
+        self.parent = kwargs.get("parent")
         self.on_login_success = on_login_success
+        firebase_config, dropbox_config = os.getenv("FIREBASE_CONFIG"), os.getenv("DBX_BACKEND")
+        if firebase_config is None or dropbox_config is None:
+            messagebox.showerror("Environment Not Configured", "This feature requires specific environments that are not detected in the system PATH.\nAccess is restricted until all required environments are properly configured.\n\nPlease contact the developer for assistance or configuration support.")
+            self.on_login_success()
+            return
+        self.firebase_auth = firebase_auth
         self.title("Auth | Cloud Exam")
         try:
             if sys.platform.startswith("win"):
@@ -278,7 +287,7 @@ class CloudAuthView(ctk.CTkToplevel):
 
 
     def run(self):
-        self.build_ui()
+        splash = SplashScreen(root=self, logo_path=getPath("assets\\images\\cloud_logo.png"))
         self.mainloop()
 
     def attempt_registration(self):

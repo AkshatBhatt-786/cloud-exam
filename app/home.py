@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from ui_components import *
-from report_card import ReportCard
+from PIL import Image
+
 
 class HomePage(ctk.CTkFrame):
     def __init__(self, master, parent, **kwargs):
@@ -8,88 +9,110 @@ class HomePage(ctk.CTkFrame):
         self.master = master
         self.parent = parent
         self.student_data = kwargs.get("student_data")
-
-        self.welcome_section = ctk.CTkFrame(self.master, fg_color=Colors.PRIMARY)
-        self.welcome_section.pack(anchor="w", pady=(0, 30), padx=10)
-
-        welcome_lbl = ctk.CTkLabel(
-            self.welcome_section,
-            text=f"Welcome",
-            font=(BOLD_FONT, 52, "bold"),
+        self.hero_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.hero_frame.grid(row=0, column=0, pady=(40, 20), sticky="nsew")
+        
+        self.welcome_label = ctk.CTkLabel(
+            self.hero_frame,
+            text=f"Welcome, {self.student_data.get("name")}! 👋",
+            font=("Arial", 24, "bold"),
             text_color=Colors.Texts.HEADERS
         )
-        welcome_lbl.pack(pady=26, side="left", padx=10, anchor="sw")
+        self.welcome_label.pack(pady=(0, 10))
 
-        name_label = ctk.CTkLabel(
-            self.welcome_section,
-            text=f"{self.student_data['name']}",
-            font=(BOLD_FONT, 32, "bold"),
-            text_color=Colors.ACCENT
-        )
-        name_label.pack(pady=32, side="left", padx=10, anchor="sw")
+        self.purpose_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.purpose_frame.grid(row=1, column=0, pady=20, sticky="nsew")
 
-        self.info_frame = ctk.CTkFrame(self.master, fg_color=Colors.PRIMARY)
-        self.info_frame.pack(anchor="w", pady=(0, 10))
+        ctk.CTkLabel(
+            self.purpose_frame,
+            text="Cloud-Based Examination Platform",
+            font=("Arial", 32, "bold"),
+            text_color=Colors.Texts.HEADERS,
+            wraplength=600
+        ).pack(pady=(0, 15))
 
-        enroll_lbl = ctk.CTkLabel(
-            self.info_frame,
-            text=f"Enrollment Number: {self.student_data['enrollment_no']}",
-            font=(ITALIC_BOLD_FONT, 16, "italic"),
-            text_color=Colors.Texts.HEADERS
-        )
-        enroll_lbl.pack(side="left", padx=10, pady=5)
+        ctk.CTkLabel(
+            self.purpose_frame,
+            text=(
+                "Cloud Exam revolutionizes traditional testing methods by providing:\n\n"
+                "• Secure, browser-locked examinations\n"
+                "• Cloud-based question paper distribution\n"
+                "• Real-time progress monitoring\n"
+                "• Instant result analytics\n"
+                "• Encrypted answer submission system\n\n"
+                "Start your exam anytime, anywhere with our reliable cloud exam platform."
+            ),
+            font=("Arial", 16),
+            text_color=Colors.Texts.HEADERS,
+            justify="left"
+        ).pack(pady=10, anchor="w")
 
-        college_id_lbl = ctk.CTkLabel(
-            self.info_frame,
-            text=f"College ID: {self.student_data['college_id']}",
-            font=(ITALIC_BOLD_FONT, 16, "italic"),
-            text_color=Colors.Texts.HEADERS
-        )
-        college_id_lbl.pack(side="left", padx=10, pady=5)
+        self.features_grid = ctk.CTkFrame(self, fg_color="transparent")
+        self.features_grid.grid(row=2, column=0, pady=30, sticky="nsew")
 
-        ctk.CTkFrame(self.master, height=2, fg_color=Colors.ACCENT).pack(fill="x", pady=10)
+        features = [
+            ("Exam Papers Backups", "assets/images/backup.png", "Automatically backup uploaded exam papers for secure data storage."),
+            ("ID-Card Analysis - Performance Insights", "assets/images/id-card.png", "Gain detailed insights into student performance with advanced analytics."),
+            ("Verified and Trusted", "assets/images/cloud.png", "Ensure the integrity of exam data with robust digital signatures and encryption.")
+        ]
 
-        self.result_wrapper = ctk.CTkFrame(self.master, fg_color=Colors.PRIMARY)
-        self.result_wrapper.pack(anchor="center", pady=10)
+        for idx, (title, icon, desc) in enumerate(features):
+            feature_card = ctk.CTkFrame(
+                self.features_grid,
+                fg_color=Colors.SECONDARY,
+                corner_radius=12,
+                border_width=1,
+                border_color=Colors.BACKGROUND
+            )
+            feature_card.grid(row=0, column=idx, padx=15, pady=10, sticky="nsew")
 
-        self.result_frame = ctk.CTkScrollableFrame(
-            self.result_wrapper,
-            fg_color=Colors.SECONDARY,
-            border_color=Colors.BACKGROUND,
-            corner_radius=10,
-            width=600 
-        )
-        self.result_frame.pack() 
-
-        self.exams = self.student_data.get("exams", {})
-
-        if not self.exams:
             ctk.CTkLabel(
-                self.result_frame,
-                text="No results to display.",
-                font=(ITALIC_BOLD_FONT, 16),
+                feature_card,
+                image=ctk.CTkImage(light_image=Image.open(getPath(icon)), size=(40, 40)),
+                text=""
+            ).pack(pady=(15, 10))
+
+            ctk.CTkLabel(
+                feature_card,
+                text=title,
+                font=("Arial", 14, "bold"),
                 text_color=Colors.Texts.HEADERS
-            ).pack(pady=20)
-        else:
-            for exam_id, exam_data in self.exams.items():
-                exam_card = ctk.CTkFrame(self.result_frame, fg_color=Colors.BACKGROUND)
-                exam_card.pack(fill="x", pady=5, padx=10)
+            ).pack(pady=(0, 5))
 
-                # Exam title
-                ctk.CTkLabel(
-                    exam_card,
-                    text=f"{self.exams.get(exam_id).get("result").get("title", f'Exam {exam_id}')}",
-                    font=(BOLD_FONT, 14),
-                    text_color=Colors.Texts.HEADERS
-                ).pack(side="left", padx=10, pady=10)
 
-                view_btn = ctk.CTkButton(
-                    exam_card,
-                    text="View Report",
-                    font=(BOLD_FONT, 12),
-                    command=lambda e_id=exam_id: self.view_report(e_id)
-                )
-                view_btn.pack(side="right", padx=10, pady=10)
-    
-    def view_report(self, exam_id):
-        ReportCard(self.master, self.student_data, exam_id)
+            ctk.CTkLabel(
+                feature_card,
+                text=desc,
+                font=("Arial", 12),
+                text_color=Colors.Texts.HEADERS,
+                wraplength=150
+            ).pack(pady=(0, 15))
+
+        self.cta_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.cta_frame.grid(row=3, column=0, pady=40, sticky="nsew")
+
+        self.start_exam_btn = LinkButton(
+            self.cta_frame,
+            text="🚀 Apply For Exam",
+            command=lambda: self.parent.redirect("exam-portal"),
+            font=("Arial", 18, "bold"),
+            fg_color=Colors.ACCENT,
+            hover_color=Colors.HIGHLIGHT,
+            height=50,
+            width=250,
+            corner_radius=25
+        )
+        self.start_exam_btn.pack(pady=20)
+
+        self.footer_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.footer_frame.grid(row=4, column=0, pady=20, sticky="sew")
+
+        ctk.CTkLabel(
+            self.footer_frame,
+            text="🔒 All exams are recorded and monitored for security purposes",
+            font=("Arial", 10),
+            text_color=Colors.Texts.PLACEHOLDER
+        ).pack(side="bottom")
+
+        self.grid_columnconfigure(0, weight=1)
+        self.features_grid.grid_columnconfigure((0, 1, 2), weight=1)

@@ -159,7 +159,7 @@ class ExamUI(ctk.CTkFrame):
             remaining = self.end_time - datetime.now()
             if remaining.total_seconds() <= 0:
                 self.timer_label.configure(text="00:00:00", text_color=Colors.DANGER)
-                self.submit_exam()
+                self.submit_exam(timeout=True)
                 return
 
             hours, remainder = divmod(remaining.seconds, 3600)
